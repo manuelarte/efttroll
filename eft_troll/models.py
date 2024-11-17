@@ -6,6 +6,8 @@ aid_kouch: int = 5873033
 
 
 class TarkovProfile:
+    """ "Holder for the Tarkov Profile from tarkov.dev"""
+
     aid: int
 
     def __init__(self, aid: int) -> None:

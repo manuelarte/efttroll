@@ -1,3 +1,5 @@
+"""Bot configuration module"""
+
 import logging
 import sqlite3
 
@@ -14,6 +16,8 @@ kouch_user_id: str = "82547395"
 
 
 class Bot(commands.Bot):
+    """Twitch Chat bot configuration"""
+
     bot_id: str
     owner_id: str
 
@@ -38,6 +42,7 @@ class Bot(commands.Bot):
         )
 
     async def setup_hook(self) -> None:
+        """Code to be executed once the bot is running"""
         # Add our component which contains our commands...
         await self.add_component(MyComponent(self.chatgpt_service))
 
@@ -110,6 +115,7 @@ class MyComponent(commands.Component):
     # We use a listener in our Component to display the messages received.
     @commands.Component.listener()
     async def event_message(self, payload: twitchio.ChatMessage) -> None:
+        """Holder to show how to handle all the messages"""
         print(f"[{payload.broadcaster.name}] - {payload.chatter.name}: {payload.text}")
 
     @commands.command(aliases=["chetazo"])
@@ -132,14 +138,6 @@ class MyComponent(commands.Component):
         game = "Isonzo"
         response = self.chatgpt_service.roast_game(name, game)
         await ctx.reply(f"{response}!")
-
-    @commands.command(aliases=["hello", "howdy", "hey"])
-    async def hi(self, ctx: commands.Context) -> None:
-        """Simple command that says hello!
-
-        !hi, !hello, !howdy, !hey
-        """
-        await ctx.reply(f"Hello {ctx.chatter.mention}!")
 
     # @commands.group(invoke_fallback=True)
     async def socials(self, ctx: commands.Context) -> None:
@@ -172,7 +170,8 @@ class MyComponent(commands.Component):
 
         # Keep in mind we are assuming this is for ourselves
         # others may not want your bot randomly sending messages...
-        await payload.broadcaster.send_message(
-            sender=self.bot.bot_id,
-            message=f"Hi... {payload.broadcaster}! You are live!",
-        )
+        # await payload.broadcaster.send_message(
+        #    sender=self.bot.bot_id,
+        #    message=f"Hi... {payload.broadcaster}! You are live!",
+        # )
+        pass

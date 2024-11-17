@@ -1,3 +1,5 @@
+"""Main module with the code to run the Twitch bot"""
+
 import asyncio
 import logging
 import os
@@ -5,29 +7,13 @@ import os
 import asqlite
 import twitchio
 
-from eft_troll.bot import Bot
-from eft_troll.models import kouch
 from services import ChatGptService
 from dotenv import load_dotenv
+from eft_troll.bot import Bot
+from eft_troll.models import kouch
+
 
 LOGGER: logging.Logger = logging.getLogger("__main__")
-
-CLIENT_ID = "0tm1ztzhhi8wzxudv57rfgawna9fz2"
-CLIENT_SECRET = "e73j0ubiomqf1gejg8xxdvdixo1aep"
-
-
-async def oauth() -> None:
-    channel_bot = twitchio.Scopes.all()
-
-    oauth_service = twitchio.authentication.OAuth(
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        redirect_uri="http://localhost:4343/oauth/callback",
-        scopes=channel_bot,  # Use updated kwargs
-    )
-
-    auth_url = oauth_service.get_authorization_url(force_verify=True)
-    print(auth_url)
 
 
 def get_mandatory_env(env: str) -> str:
@@ -48,7 +34,7 @@ if __name__ == "__main__":
     twitchio.utils.setup_logging(level=logging.INFO)
 
     async def runner() -> None:
-        await oauth()
+        """Run the bot"""
         async with asqlite.create_pool("tokens.db") as tdb, Bot(
             client_id=get_mandatory_env("CLIENT_ID"),
             client_secret=get_mandatory_env("CLIENT_SECRET"),
