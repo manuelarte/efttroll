@@ -1,5 +1,7 @@
 setuptools==75.5.0
 twitchio~=3.0.0.dev1393+g150fb49
+uvicorn==0.32.0
+starlette==0.41.2
 python-dotenv==1.0.1
 openai==1.54.4
 asqlite==2.0.0

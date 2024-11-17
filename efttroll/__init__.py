@@ -1,6 +1,6 @@
 """Global project variables"""
 
-__app_name__ = "eft_troll"
+__app_name__ = "efttroll"
 __version__ = "0.0.1"
 
 
