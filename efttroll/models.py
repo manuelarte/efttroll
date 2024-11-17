@@ -4,7 +4,7 @@ import typing
 
 import requests
 
-from eft_troll import tarkov_dev_api_url
+from efttroll import tarkov_dev_api_url
 
 aid_kouch: int = 5873033
 twitch_id_kouch: str = "82547395"

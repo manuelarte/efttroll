@@ -3,7 +3,7 @@
 from openai import OpenAI
 import i18n
 
-from eft_troll.models import TarkovStreamer, TarkovProfile
+from efttroll.models import TarkovStreamer, TarkovProfile
 
 
 class RoastService:

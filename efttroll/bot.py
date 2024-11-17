@@ -9,8 +9,8 @@ import twitchio
 from twitchio.ext import commands
 from twitchio import eventsub
 
-from eft_troll.models import KOUCH
-from eft_troll.services import RoastService
+from efttroll.models import KOUCH
+from efttroll.services import RoastService
 
 LOGGER: logging.Logger = logging.getLogger("Bot")
 

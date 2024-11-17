@@ -10,8 +10,8 @@ import twitchio
 
 from services import RoastService
 from dotenv import load_dotenv
-from eft_troll.bot import Bot, BotConfig
-from eft_troll.models import KOUCH
+from efttroll.bot import Bot, BotConfig
+from efttroll.models import KOUCH
 
 
 LOGGER: logging.Logger = logging.getLogger("__main__")
