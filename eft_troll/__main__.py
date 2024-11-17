@@ -5,6 +5,7 @@ import logging
 import os
 
 import asqlite
+import i18n
 import twitchio
 
 from services import RoastService
@@ -25,6 +26,8 @@ def get_mandatory_env(env: str) -> str:
 
 if __name__ == "__main__":
     load_dotenv()
+    i18n_path = os.getenv("I18N_PATH", default="../i18n/")
+    i18n.load_path.append(i18n_path)
 
     KOUCH.load_profile()
 

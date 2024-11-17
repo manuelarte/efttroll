@@ -50,7 +50,6 @@ class Bot(commands.Bot):
 
     async def setup_hook(self) -> None:
         """Code to be executed once the bot is running"""
-        # Add our component which contains our commands...
         await self.add_component(MyComponent(self.chatgpt_service))
 
         # Subscribe to read chat (event_message) from our channel as the bot...
@@ -105,8 +104,8 @@ class Bot(commands.Bot):
             await self.add_token(row["token"], row["refresh"])
 
     async def setup_database(self) -> None:
-        """Setup the database to be used to store the tokens"""
-        # Create our token table, if it doesn't exist..
+        """Set up the database to be used to store the tokens"""
+        # Create our token table, if it doesn't exist...
         query = """CREATE TABLE IF NOT EXISTS tokens(user_id TEXT PRIMARY KEY, token TEXT NOT NULL, refresh TEXT NOT NULL)"""
         async with self.token_database.acquire() as connection:
             await connection.execute(query)
@@ -146,7 +145,7 @@ class MyComponent(commands.Component):
 
         !cheto, !chetazo
         """
-        response = self.chatgpt_service.roast_cheater(KOUCH)
+        response = self.chatgpt_service.roast_dying_of_cheater(KOUCH)
         await ctx.reply(f"{response}!")
 
     @commands.Component.listener()

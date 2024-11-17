@@ -1,0 +1,6 @@
+en:
+  roast_streamer:
+    beginning: Do a roast to the streamer %{name}.
+    description: |
+      Here you have more information about %{name}:
+      %{description}

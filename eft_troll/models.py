@@ -27,16 +27,23 @@ class TarkovStreamer:
     twitch_id: str
     name: str
     description: str
+    locale: str
     tarkov_aid: int
     # TODO, maybe store a list, so then you can compare how many times he died in the last x hours
     __tarkov_dev_profile: TarkovProfile or None
 
     def __init__(
-        self, twitch_id: str, name: str, description: str, tarkov_aid: int
+        self,
+        twitch_id: str,
+        name: str,
+        description: str,
+        tarkov_aid: int,
+        locale: str = "en",
     ) -> None:
         self.twitch_id = twitch_id
         self.name = name
         self.description = description
+        self.locale = locale
         self.tarkov_aid = tarkov_aid
 
     def load_profile(self):
@@ -55,5 +62,6 @@ KOUCH: TarkovStreamer = TarkovStreamer(
     twitch_id=twitch_id_kouch,
     name="Kouch",
     description=KOUCH_DESCRIPTION,
+    locale="es",
     tarkov_aid=aid_kouch,
 )

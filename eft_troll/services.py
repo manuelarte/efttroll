@@ -1,6 +1,7 @@
 """Services to be used by the bot"""
 
 from openai import OpenAI
+import i18n
 
 from eft_troll.models import TarkovStreamer, TarkovProfile
 
@@ -13,12 +14,20 @@ class RoastService:
 
     def roast_streamer(self, streamer: TarkovStreamer) -> str:
         """Roast streamer"""
-        input_message: str = (
-            f"""Haz un roast al streamer {streamer.name}.
-            Se creativo e intenta hacerlo en menos de 200 caracteres.
-            Aquí tienes más información sobre {streamer.name}: {streamer.description}"""
+        do_roast_beginning = i18n.t(
+            "efttroll.roast_streamer.beginning", name=streamer.name, locale="es"
         )
-        # Add extra information about the streamer
+        do_roast_description = i18n.t(
+            "efttroll.roast_streamer.description",
+            name=streamer.name,
+            description=streamer.description,
+            locale="es",
+        )
+        input_message: str = (
+            f"""{do_roast_beginning}.
+            Se creativo e intenta hacerlo en menos de 200 caracteres.
+            {do_roast_description}"""
+        )
         chat_completion = self.client.chat.completions.create(
             messages=[
                 {
@@ -31,7 +40,7 @@ class RoastService:
         response = chat_completion.choices[0].message
         return response.content
 
-    def roast_cheater(
+    def roast_dying_of_cheater(
         self, streamer: TarkovStreamer, cheater_profile: TarkovProfile or None = None
     ) -> str:
         """Roast a streamer because he/she has been killed by a cheater"""
