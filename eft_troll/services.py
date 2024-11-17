@@ -2,39 +2,23 @@
 
 from openai import OpenAI
 
+from eft_troll.models import TarkovStreamer, TarkovProfile
 
-class ChatGptService:
-    """ChatGpt service"""
+
+class RoastService:
+    """Roast service"""
 
     def __init__(self, open_api_key: str):
         self.client = OpenAI(api_key=open_api_key)
 
-    def roast(self, name: str) -> str:
+    def roast_streamer(self, streamer: TarkovStreamer) -> str:
         """Roast streamer"""
         input_message: str = (
-            f"""Haz un roast al streamer {name} que acaba de morir en Escape From Tarkov jugando como PMC.\n
-            Se especialmente duro e intenta hacerlo en menos de 200 caracteres."""
+            f"""Haz un roast al streamer {streamer.name}.
+            Se creativo e intenta hacerlo en menos de 200 caracteres.
+            Aquí tienes más información sobre {streamer.name}: {streamer.description}"""
         )
-        chat_completion = self.client.chat.completions.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": input_message,
-                }
-            ],
-            model="gpt-4o",
-        )
-        response = chat_completion.choices[0].message
-        print(response)
-        return response.content
-
-    def roast_cheater(self, name: str) -> str:
-        """Roast a streamer because he has been killed by a cheater"""
-        input_message: str = (
-            f"""Haz un roast al streamer {name} que acaba de morir en Escape From Tarkov 
-            jugando como PMC por culpa de un cheto.\n
-            Se especialmente duro e intenta hacerlo en menos de 200 caracteres."""
-        )
+        # Add extra information about the streamer
         chat_completion = self.client.chat.completions.create(
             messages=[
                 {
@@ -47,20 +31,22 @@ class ChatGptService:
         response = chat_completion.choices[0].message
         return response.content
 
-    def roast_game(self, name: str, game: str) -> str:
-        """Roast a streamer because of the game he is playing"""
+    def roast_cheater(
+        self, streamer: TarkovStreamer, cheater_profile: TarkovProfile or None = None
+    ) -> str:
+        """Roast a streamer because he/she has been killed by a cheater"""
         input_message: str = (
-            f"""Imaginate que eres un bot de twitch al que le han pedido que haga roast a streamers.
-Haz un roast al streamer {name} porque esta jugando al juego {game}. 
-{name} suele jugar a Escape From Tarkov y es conocido por hacer canciones con rima y de risa en youtube sobre Escape From Tarkov.
-{name} se caracteriza por llevar una mascara rosa en sus streams. 
-Se especialmente ingenioso, intenta hacerlo en menos de 200 caracteres."""
+            f"""Haz un roast al streamer {streamer.name} que acaba de morir en Escape From Tarkov por culpa de un cheto.
+            Se creativo e intenta hacerlo en menos de 200 caracteres."""
         )
+        return self.__send_message__(input_message)
+
+    def __send_message__(self, message: str) -> str:
         chat_completion = self.client.chat.completions.create(
             messages=[
                 {
                     "role": "user",
-                    "content": input_message,
+                    "content": message,
                 }
             ],
             model="gpt-4o",

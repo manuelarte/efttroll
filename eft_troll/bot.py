@@ -2,17 +2,27 @@
 
 import logging
 import sqlite3
+from dataclasses import dataclass
 
 import asqlite
 import twitchio
 from twitchio.ext import commands
 from twitchio import eventsub
 
-from eft_troll.services import ChatGptService
+from eft_troll.models import KOUCH
+from eft_troll.services import RoastService
 
 LOGGER: logging.Logger = logging.getLogger("Bot")
 
-kouch_user_id: str = "82547395"
+
+@dataclass
+class BotConfig:
+    """Bot configuration class"""
+
+    client_id: str
+    client_secret: str
+    bot_id: str
+    owner_id: str
 
 
 class Bot(commands.Bot):
@@ -23,21 +33,18 @@ class Bot(commands.Bot):
 
     def __init__(
         self,
-        client_id: str,
-        client_secret: str,
-        bot_id: str,
-        owner_id: str,
-        chatgpt_service: ChatGptService,
+        config: BotConfig,
+        chatgpt_service: RoastService,
         *,
         token_database: asqlite.Pool,
     ) -> None:
         self.token_database = token_database
         self.chatgpt_service = chatgpt_service
         super().__init__(
-            client_id=client_id,
-            client_secret=client_secret,
-            bot_id=bot_id,
-            owner_id=owner_id,
+            client_id=config.client_id,
+            client_secret=config.client_secret,
+            bot_id=config.bot_id,
+            owner_id=config.owner_id,
             prefix="!",
         )
 
@@ -49,20 +56,21 @@ class Bot(commands.Bot):
         # Subscribe to read chat (event_message) from our channel as the bot...
         # This creates and opens a websocket to Twitch EventSub...
         subscription = eventsub.ChatMessageSubscription(
-            broadcaster_user_id=kouch_user_id, user_id=self.bot_id
+            broadcaster_user_id=KOUCH.twitch_id, user_id=self.bot_id
         )
         await self.subscribe_websocket(payload=subscription)
 
         # Subscribe and listen to when a stream goes live..
         # For this example listen to our own stream...
         subscription = eventsub.StreamOnlineSubscription(
-            broadcaster_user_id=kouch_user_id
+            broadcaster_user_id=KOUCH.twitch_id
         )
         await self.subscribe_websocket(payload=subscription)
 
     async def add_token(
         self, token: str, refresh: str
     ) -> twitchio.authentication.ValidateTokenPayload:
+        """Add token to the database"""
         # Make sure to call super() as it will add the tokens interally and return us some data...
         resp: twitchio.authentication.ValidateTokenPayload = await super().add_token(
             token, refresh
@@ -85,6 +93,7 @@ class Bot(commands.Bot):
         return resp
 
     async def load_tokens(self, path: str | None = None) -> None:
+        """Load tokens from the database"""
         # We don't need to call this manually, it is called in .login() from .start() internally...
 
         async with self.token_database.acquire() as connection:
@@ -96,19 +105,23 @@ class Bot(commands.Bot):
             await self.add_token(row["token"], row["refresh"])
 
     async def setup_database(self) -> None:
+        """Setup the database to be used to store the tokens"""
         # Create our token table, if it doesn't exist..
         query = """CREATE TABLE IF NOT EXISTS tokens(user_id TEXT PRIMARY KEY, token TEXT NOT NULL, refresh TEXT NOT NULL)"""
         async with self.token_database.acquire() as connection:
             await connection.execute(query)
 
     async def event_ready(self) -> None:
+        """Event triggered when the bot is ready to go"""
         LOGGER.info("Successfully logged in as: %s", self.bot_id)
 
 
 class MyComponent(commands.Component):
-    chatgpt_service: ChatGptService
+    """Command handler"""
 
-    def __init__(self, chatgpt_service: ChatGptService) -> None:
+    chatgpt_service: RoastService
+
+    def __init__(self, chatgpt_service: RoastService) -> None:
         # Passing args is not required...
         self.chatgpt_service = chatgpt_service
 
@@ -118,54 +131,27 @@ class MyComponent(commands.Component):
         """Holder to show how to handle all the messages"""
         print(f"[{payload.broadcaster.name}] - {payload.chatter.name}: {payload.text}")
 
+    @commands.command()
+    async def paquete(self, ctx: commands.Context) -> None:
+        """Command to roast the streamer because he got killed by a cheater!
+
+        !paquete
+        """
+        response = self.chatgpt_service.roast_streamer(KOUCH)
+        await ctx.reply(f"{response}!")
+
     @commands.command(aliases=["chetazo"])
     async def cheto(self, ctx: commands.Context) -> None:
         """Command to roast the streamer because he got killed by a cheater!
 
         !cheto, !chetazo
         """
-        name = "Kouch"
-        response = self.chatgpt_service.roast_cheater(name)
+        response = self.chatgpt_service.roast_cheater(KOUCH)
         await ctx.reply(f"{response}!")
-
-    @commands.command()
-    async def juegazo(self, ctx: commands.Context) -> None:
-        """Command to roast the streamer because he plays this game!
-
-        !juegazo
-        """
-        name = "Kouch"
-        game = "Isonzo"
-        response = self.chatgpt_service.roast_game(name, game)
-        await ctx.reply(f"{response}!")
-
-    # @commands.group(invoke_fallback=True)
-    async def socials(self, ctx: commands.Context) -> None:
-        """Group command for our social links.
-
-        !socials
-        """
-        await ctx.send("discord.gg/..., youtube.com/..., twitch.tv/...")
-
-    # @socials.command(name="discord")
-    async def socials_discord(self, ctx: commands.Context) -> None:
-        """Sub command of socials that sends only our discord invite.
-
-        !socials discord
-        """
-        await ctx.send("discord.gg/...")
-
-    # @commands.command(aliases=["repeat"])
-    # @commands.is_moderator()
-    async def say(self, ctx: commands.Context, *, content: str) -> None:
-        """Moderator only command which repeats back what you say.
-
-        !say hello world, !repeat I am cool LUL
-        """
-        await ctx.send(content)
 
     @commands.Component.listener()
     async def event_stream_online(self, payload: twitchio.StreamOnline) -> None:
+        """Event dispatched when a user goes live from the subscription we made above"""
         # Event dispatched when a user goes live from the subscription we made above...
 
         # Keep in mind we are assuming this is for ourselves

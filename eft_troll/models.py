@@ -1,34 +1,59 @@
+"""Models to be used in the app"""
+
+import typing
+
 import requests
 
 from eft_troll import tarkov_dev_api_url
 
 aid_kouch: int = 5873033
+twitch_id_kouch: str = "82547395"
 
 
 class TarkovProfile:
     """ "Holder for the Tarkov Profile from tarkov.dev"""
 
     aid: int
+    nickname: str
 
-    def __init__(self, aid: int) -> None:
-        self.aid = aid
+    def __init__(self, profile: dict[str, typing.Any]) -> None:
+        self.aid = int(profile["aid"])
+        self.nickname = profile["info"]["nickname"]
 
 
 class TarkovStreamer:
-    aid: int
-    name: str
-    # TODO, maybe store a list, so then you can compare how many times he died in the last x hours
-    tarkov_dev_profile: dict[str, object] or None
+    """Holder for info for the steamer"""
 
-    def __init__(self, aid: int, name: str) -> None:
-        self.aid = aid
+    twitch_id: str
+    name: str
+    description: str
+    tarkov_aid: int
+    # TODO, maybe store a list, so then you can compare how many times he died in the last x hours
+    __tarkov_dev_profile: TarkovProfile or None
+
+    def __init__(
+        self, twitch_id: str, name: str, description: str, tarkov_aid: int
+    ) -> None:
+        self.twitch_id = twitch_id
         self.name = name
+        self.description = description
+        self.tarkov_aid = tarkov_aid
 
     def load_profile(self):
-        profile = requests.get(tarkov_dev_api_url(self.aid))
-        if profile.status_code == 200:
-            print(profile.json())
-            self.tarkov_dev_profile = profile.json()
+        """Load tarkov profile from tarkov.dev"""
+        response = requests.get(tarkov_dev_api_url(self.tarkov_aid))
+        if response.status_code == 200:
+            self.__tarkov_dev_profile = TarkovProfile(response.json())
+        else:
+            raise Exception(f"Could not load profile: Response({response.status_code})")
 
 
-kouch: TarkovStreamer = TarkovStreamer(aid=aid_kouch, name="Kouch")
+KOUCH_DESCRIPTION = """Kouch es un streamer conocido por jugar principalmente a juegos de disparos en primera persona.
+                    Su juego principal es Escape From Tarkov y su estilo de juego, se basa, principalmente en ratear.
+                    Sus streams se caracterizan porque lleva un balaclava rosa y por sus alertas, que son muy divertidas."""
+KOUCH: TarkovStreamer = TarkovStreamer(
+    twitch_id=twitch_id_kouch,
+    name="Kouch",
+    description=KOUCH_DESCRIPTION,
+    tarkov_aid=aid_kouch,
+)
