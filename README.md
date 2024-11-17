@@ -1,8 +1,17 @@
-# EFT-
+[![python-ci](https://github.com/manuelarte/efttroll/actions/workflows/python-ci.yml/badge.svg)](https://github.com/manuelarte/efttroll/actions/workflows/python-ci.yml)
+# EFTTROLL
 
-## Resources:
+## 🤖 Introduction
+
+Twitch Bot to be used by Escape From Tarkov streamers.
+
+## 🔗 Resources:
 
 - Twitchio documentation: https://twitchio.dev/en/dev-3.0/getting-started/quickstart.html
+
+## Contact
+
+- 📧 manueldoncelmartos@gmail.com
 
 ## FAQ
 
