@@ -1,7 +1,7 @@
 """Global project variables"""
 
 __app_name__ = "efttroll"
-__version__ = "0.0.1"
+__version__ = "0.0.1-SNAPSHOT"
 
 
 def tarkov_dev_api_url(aid: int) -> str:
