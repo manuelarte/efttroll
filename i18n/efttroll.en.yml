@@ -4,3 +4,5 @@ en:
     description: |
       Here you have more information about %{name}:
       %{description}
+  roast_getting_carried:
+    help: 'Use the command with !carrito @<carrier>'

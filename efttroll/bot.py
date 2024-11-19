@@ -5,11 +5,12 @@ import sqlite3
 from dataclasses import dataclass
 
 import asqlite
+import i18n
 import twitchio
 from twitchio.ext import commands
-from twitchio import eventsub
+from twitchio import eventsub, User
 
-from efttroll.models import KOUCH
+from efttroll.models import KOUCH, TarkovStreamer
 from efttroll.services import RoastService
 
 LOGGER: logging.Logger = logging.getLogger("Bot")
@@ -59,7 +60,7 @@ class Bot(commands.Bot):
         )
         await self.subscribe_websocket(payload=subscription)
 
-        # Subscribe and listen to when a stream goes live..
+        # Subscribe and listen to when a stream goes live...
         # For this example listen to our own stream...
         subscription = eventsub.StreamOnlineSubscription(
             broadcaster_user_id=KOUCH.twitch_id
@@ -147,6 +148,21 @@ class MyComponent(commands.Component):
         """
         response = self.chatgpt_service.roast_dying_of_cheater(KOUCH)
         await ctx.reply(f"{response}!")
+
+    @commands.command()
+    async def carrito(self, ctx: commands.Context, carrier: User | None = None) -> None:
+        """Command to roast the streamer because he got killed by a cheater!
+
+        !carrito @<carrier>
+        """
+        # TODO, not working the User transformer, because I stll get an exception
+        streamer: TarkovStreamer = KOUCH
+        if carrier is None:
+            help_response = i18n.t("efttroll.roast_getting_carried.help", locale=streamer.locale)
+            await ctx.reply(help_response)
+        else:
+            response = self.chatgpt_service.roast_getting_carried(streamer, carrier.name)
+            await ctx.reply(f"{response}!")
 
     @commands.Component.listener()
     async def event_stream_online(self, payload: twitchio.StreamOnline) -> None:

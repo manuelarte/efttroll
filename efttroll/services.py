@@ -50,6 +50,16 @@ class RoastService:
         )
         return self.__send_message__(input_message)
 
+    def roast_getting_carried(
+        self, streamer: TarkovStreamer, carrier: str
+    ) -> str:
+        """Roast a streamer because he/she is getting carried by another player"""
+        input_message: str = (
+            f"""Haz un roast al streamer {streamer.name} que ha pedido ayuda a {carrier}, y le están haciendo un carrito.
+            Se creativo e intenta hacerlo en menos de 200 caracteres."""
+        )
+        return self.__send_message__(input_message)
+
     def __send_message__(self, message: str) -> str:
         chat_completion = self.client.chat.completions.create(
             messages=[

@@ -4,3 +4,5 @@ es:
     description: |
       Aquí tienes mas información sobre %{name}:
       %{description}
+  roast_getting_carried:
+    help: 'Usa el commando con: !carrito @<carreador>'
