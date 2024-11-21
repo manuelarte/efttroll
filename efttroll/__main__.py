@@ -8,13 +8,13 @@ import asqlite
 import i18n
 import twitchio
 
+import efttroll
 from services import RoastService
 from dotenv import load_dotenv
 from efttroll.bot import Bot, BotConfig
 from efttroll.models import KOUCH
 
-
-LOGGER: logging.Logger = logging.getLogger("__main__")
+LOGGER: logging.Logger = logging.getLogger("Main")
 
 
 def get_mandatory_env(env: str) -> str:
@@ -52,6 +52,7 @@ if __name__ == "__main__":
             await bot.start()
 
     try:
+        LOGGER.info("Running efttroll version: %s", efttroll.__version__)
         asyncio.run(runner())
     except KeyboardInterrupt:
         LOGGER.warning("Shutting down due to KeyboardInterrupt...")

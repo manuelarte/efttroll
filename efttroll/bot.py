@@ -71,7 +71,7 @@ class Bot(commands.Bot):
         self, token: str, refresh: str
     ) -> twitchio.authentication.ValidateTokenPayload:
         """Add token to the database"""
-        # Make sure to call super() as it will add the tokens interally and return us some data...
+        # Make sure to call super() as it will add the tokens internally and return us some data...
         resp: twitchio.authentication.ValidateTokenPayload = await super().add_token(
             token, refresh
         )

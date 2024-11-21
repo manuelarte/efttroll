@@ -1,4 +1,5 @@
 .idea/
+.run/
 *.iml
 .env
 .venv
