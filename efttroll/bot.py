@@ -1,6 +1,7 @@
 """Bot configuration module"""
 
 import logging
+import os
 import sqlite3
 from dataclasses import dataclass
 
@@ -10,6 +11,7 @@ import twitchio
 from twitchio.ext import commands
 from twitchio import eventsub, User
 
+import utils
 from efttroll.models import KOUCH, TarkovStreamer
 from efttroll.services import RoastService
 
@@ -25,6 +27,15 @@ class BotConfig:
     bot_id: str
     owner_id: str
 
+    @staticmethod
+    def from_env() -> "BotConfig":
+        return BotConfig(
+            utils.get_mandatory_env("CLIENT_ID"),
+            utils.get_mandatory_env("CLIENT_SECRET"),
+            utils.get_mandatory_env("BOT_ID"),
+            utils.get_mandatory_env("OWNER_ID"),
+        )
+
 
 class Bot(commands.Bot):
     """Twitch Chat bot configuration"""
@@ -33,11 +44,11 @@ class Bot(commands.Bot):
     owner_id: str
 
     def __init__(
-        self,
-        config: BotConfig,
-        chatgpt_service: RoastService,
-        *,
-        token_database: asqlite.Pool,
+            self,
+            config: BotConfig,
+            chatgpt_service: RoastService,
+            *,
+            token_database: asqlite.Pool,
     ) -> None:
         self.token_database = token_database
         self.chatgpt_service = chatgpt_service
@@ -68,7 +79,7 @@ class Bot(commands.Bot):
         await self.subscribe_websocket(payload=subscription)
 
     async def add_token(
-        self, token: str, refresh: str
+            self, token: str, refresh: str
     ) -> twitchio.authentication.ValidateTokenPayload:
         """Add token to the database"""
         # Make sure to call super() as it will add the tokens internally and return us some data...
@@ -155,7 +166,7 @@ class MyComponent(commands.Component):
 
         !carrito @<carrier>
         """
-        # TODO, not working the User transformer, because I stll get an exception
+        # TODO, not working the User transformer, because I still get an exception
         streamer: TarkovStreamer = KOUCH
         if carrier is None:
             help_response = i18n.t("efttroll.roast_getting_carried.help", locale=streamer.locale)
