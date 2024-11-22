@@ -60,6 +60,16 @@ class RoastService:
         )
         return self.__send_message__(input_message)
 
+    def roast_weapon(
+        self, streamer: TarkovStreamer, weapon: str
+    ) -> str:
+        """Roast a streamer because he/she is using an specific weapon"""
+        input_message: str = (
+            f"""Haz un roast al streamer {streamer.name} que está usando el arma {weapon} en Escape From Tarkov.
+            Se creativo e intenta hacerlo en menos de 200 caracteres."""
+        )
+        return self.__send_message__(input_message)
+
     def __send_message__(self, message: str) -> str:
         chat_completion = self.client.chat.completions.create(
             messages=[

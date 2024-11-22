@@ -164,6 +164,16 @@ class MyComponent(commands.Component):
             response = self.chatgpt_service.roast_getting_carried(streamer, carrier.name)
             await ctx.reply(f"{response}!")
 
+    @commands.command()
+    async def rfb(self, ctx: commands.Context) -> None:
+        """Command to roast the streamer it's using an RFB!
+
+        !rfb
+        """
+        streamer = KOUCH
+        response = self.chatgpt_service.roast_weapon(streamer, "RFB")
+        await ctx.reply(f"{response}!")
+
     @commands.Component.listener()
     async def event_stream_online(self, payload: twitchio.StreamOnline) -> None:
         """Event dispatched when a user goes live from the subscription we made above"""
