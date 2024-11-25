@@ -16,7 +16,9 @@ Twitch Bot to be used by Escape From Tarkov streamers.
 ## FAQ
 
 - How do I get the link for efttroll to be used in a stream:
-- async def oauth() -> None:
+- Code
+```python
+async def oauth() -> None:
     all_scopes = twitchio.Scopes.all()
 
     oauth = twitchio.authentication.OAuth(
@@ -29,3 +31,4 @@ Twitch Bot to be used by Escape From Tarkov streamers.
 
     auth_url = oauth.get_authorization_url(force_verify=True)
     print(auth_url)
+```
